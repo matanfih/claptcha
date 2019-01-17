@@ -101,12 +101,15 @@ class Claptcha(object):
         """
         text = self.text
         w, h = self.font.getsize(text)
-        margin_x = round(self.margin_x * w / self.w)
-        margin_y = round(self.margin_y * h / self.h)
-
+        margin_x = int(round((self.margin_x * w) // self.w))
+        margin_y = int(round((self.margin_y * h) // self.h))
+	print(margin_y)
+	print(margin_x)
+	
         image = Image.new('RGB',
                           (w + 2*margin_x, h + 2*margin_y),
                           (255, 255, 255))
+			  #'red')
 
         # Text
         self._writeText(image, text, pos=(margin_x, margin_y))
@@ -299,8 +302,12 @@ class Claptcha(object):
 
         # Line width modifier was chosen as an educated guess
         # based on default image area.
-        l_width = round((w * h)**0.5 * 2.284e-2)
-
+        l_width = int(round((w * h)**0.5 * 2.284e-2))
+	#print(x1)
+	#print(y1)
+	#print(x2)
+	#print(y2)
+	
         # Draw
         l_draw.line(((x1, y1), (x2, y2)), fill=(0, 0, 0, 255), width=l_width)
 
