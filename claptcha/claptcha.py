@@ -103,8 +103,6 @@ class Claptcha(object):
         w, h = self.font.getsize(text)
         margin_x = int(round((self.margin_x * w) // self.w))
         margin_y = int(round((self.margin_y * h) // self.h))
-	print(margin_y)
-	print(margin_x)
 	
         image = Image.new('RGB',
                           (w + 2*margin_x, h + 2*margin_y),
