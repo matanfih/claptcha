@@ -83,9 +83,23 @@ class Claptcha(object):
         self.format = kwargs.get('format', 'PNG')
         self.resample = kwargs.get('resample', Image.BILINEAR)
         self.noise = abs(kwargs.get('noise', 0.))
+        self.image = None
 
+		
+	@property
+    def full_flow_dirty_image(self):
+		r"""
+		wrapper function to create image with image text based on paramters
+		collected during __init__
+		clear image = create image with distorted text 
+		dirty image = adds noise and random curve over image
+		"""
+		clear_image()
+		return dirty_image()
+		
+		
     @property
-    def image(self):
+    def clear_image(self):
         r"""
         Tuple with a CAPTCHA text and a Image object.
 
@@ -99,31 +113,67 @@ class Claptcha(object):
 
         :returns: ``tuple`` (CAPTCHA text, Image object)
         """
-        text = self.text
-        w, h = self.font.getsize(text)
+        #text = self.text
+        w, h = self.font.getsize(self.text)
         margin_x = int(round((self.margin_x * w) // self.w))
         margin_y = int(round((self.margin_y * h) // self.h))
 	
-        image = Image.new('RGB',
+        self.image = Image.new('RGB',
                           (w + 2*margin_x, h + 2*margin_y),
                           (255, 255, 255))
 			  #'red')
 
         # Text
-        self._writeText(image, text, pos=(margin_x, margin_y))
+        self._writeText(self.image, self.text, pos=(margin_x, margin_y))
+        
+        # Resize
+        retimage = self.image.resize(self.size, resample=self.resample)
 
+        return (self.text, retimage)
+        
+    @property
+    def dirty_image(self):
+        r"""
+        Tuple with a CAPTCHA text and a Image object.
+
+        Images are generated on the fly, using given text source, TTF font and
+        other parameters passable through __init__. All letters in used text
+        are morphed. Also a line is morphed and pased onto CAPTCHA text.
+        Additionaly, if self.noise > 1/255, a "snowy" image is merged with
+        CAPTCHA image with a 50/50 ratio.
+        Property returns a pair containing a string with text in returned
+        image and image itself.
+
+        :returns: ``tuple`` (CAPTCHA text, Image object)
+        """
+        """
+        text = self.text
+        w, h = self.font.getsize(text)
+        margin_x = int(round((self.margin_x * w) // self.w))
+        margin_y = int(round((self.margin_y * h) // self.h))
+	
+        self.image = Image.new('RGB',
+                          (w + 2*margin_x, h + 2*margin_y),
+                          (255, 255, 255))
+			  #'red')
+
+        # Text
+        self._writeText(self.image, text, pos=(margin_x, margin_y))'''
+	"""
+	
         # Line
-        self._drawLine(image)
-
+        self._drawLine(self.image)
+		
         # White noise
-        noise = self._whiteNoise(image.size)
+        noise = self._whiteNoise(self.image.size)
         if noise is not None:
-            image = Image.blend(image, noise, 0.5)
+            self.image = Image.blend(self.image, noise, 0.5)
 
         # Resize
-        image = image.resize(self.size, resample=self.resample)
+        self.image = self.image.resize(self.size, resample=self.resample)
 
-        return (text, image)
+        return (self.text, self.image)
+
 
     @property
     def bytes(self):
@@ -142,6 +192,7 @@ class Claptcha(object):
         bytes.seek(0)
         return (text, bytes)
 
+
     def write(self, file):
         r"""
         Save CAPTCHA image in given filepath.
@@ -158,10 +209,12 @@ class Claptcha(object):
         image.save(file, format=self.format)
         return (text, file)
 
+
     @property
     def source(self):
         """Text source, either a string or a callable object."""
         return self.__source
+
 
     @source.setter
     def source(self, source):
