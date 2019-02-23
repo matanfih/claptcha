@@ -78,9 +78,8 @@ print(text)  # 'XCQYVS', captcha3.png has different dimentions than
              # captcha1.png and captcha2.png
 ```
 
+run provided notebook for complete walktthrough
 
-```run provided notebook for complete walktthrough
-```
 
 ## License
 
