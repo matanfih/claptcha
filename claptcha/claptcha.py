@@ -79,23 +79,23 @@ class Claptcha(object):
         self.size = size
         self.margin = margin
         self.font = font
-
         self.format = kwargs.get('format', 'PNG')
         self.resample = kwargs.get('resample', Image.BILINEAR)
         self.noise = abs(kwargs.get('noise', 0.))
+        self.lines = 3
         self.image = None
 
 		
-	@property
+    @property
     def full_flow_dirty_image(self):
-		r"""
-		wrapper function to create image with image text based on paramters
-		collected during __init__
-		clear image = create image with distorted text 
-		dirty image = adds noise and random curve over image
-		"""
-		clear_image()
-		return dirty_image()
+        r"""
+        wrapper function to create image with image text based on paramters
+        collected during __init__
+        clear image = create image with distorted text 
+        dirty image = adds noise and random curve over image
+        """
+        clear_image()
+        return dirty_image()
 		
 		
     @property
@@ -161,13 +161,15 @@ class Claptcha(object):
         self._writeText(self.image, text, pos=(margin_x, margin_y))'''
 	"""
 	
-        # Line
-        self._drawLine(self.image)
+        for l in range(self.lines):
+            # Line
+            self._drawLine(self.image)
 		
         # White noise
         noise = self._whiteNoise(self.image.size)
-        if noise is not None:
+        if noise is not None :
             self.image = Image.blend(self.image, noise, 0.5)
+            
 
         # Resize
         self.image = self.image.resize(self.size, resample=self.resample)
@@ -205,8 +207,8 @@ class Claptcha(object):
             Path to file, where CAPTCHA image will be saved.
         :returns: ``tuple`` (CAPTCHA text, filepath)
         """
-        text, image = self.image
-        image.save(file, format=self.format)
+        #text, image = self.image
+        self.image.save(file, format=self.format)
         return (text, file)
 
 
