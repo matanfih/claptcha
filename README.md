@@ -1,6 +1,6 @@
 # Claptcha
 
-A simple CAPTCHA image generator.
+a take on "A simple CAPTCHA image generator."
 
 This module provides a single class (Claptcha) that can create on the fly
 PIL Image instances, BytesIO objects or save image files containing a simple
@@ -76,6 +76,10 @@ c.margin = (25,25)
 text, _ = c.write('captcha3.png')
 print(text)  # 'XCQYVS', captcha3.png has different dimentions than
              # captcha1.png and captcha2.png
+```
+
+
+```run provided notebook for complete walktthrough
 ```
 
 ## License
